@@ -3,6 +3,7 @@ import { SafeAreaView, ScrollView, StatusBar, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import Item from '~/components/Item';
+import HeartButton from '~/components/HeartButton';
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
@@ -14,6 +15,7 @@ export default class HomeScreen extends Component {
     headerTitleStyle: {
       fontWeight: 'bold',
     },
+    headerRight: <HeartButton />,
   };
 
   state = {
@@ -37,7 +39,7 @@ export default class HomeScreen extends Component {
 
       this.setState({ items });
     } catch (error) {
-      console.log(error);
+      console.tron.log(error);
     }
   }
 
@@ -49,53 +51,23 @@ export default class HomeScreen extends Component {
     }
   }
 
-  alreadyInStorage = async item => {
-    try {
-      const storedItems = await this.getData('items');
-
-      if (storedItems.find(el => el.id === item.id)) {
-        return true;
-      }
-
-      return false;
-    } catch (error) {
-      console.tron.log(error);
-    }
-  };
-
   storeData = async item => {
     try {
       const { items } = this.state;
       const storedItems = await this.getData('items');
 
-      const already = await this.alreadyInStorage(item);
+      const modifiedItem = { ...item, isFavorited: true };
+      const mergeItems = [...storedItems, modifiedItem];
+      await AsyncStorage.setItem('items', JSON.stringify(mergeItems));
 
-      if (!already) {
-        const modifiedItem = { ...item, isFavorited: true };
-        const mergeItems = [...storedItems, modifiedItem];
-        await AsyncStorage.setItem('items', JSON.stringify(mergeItems));
+      const modifiedItems = items.map(stateItem => {
+        if (stateItem.id === item.id) {
+          return { ...stateItem, isFavorited: true };
+        }
+        return stateItem;
+      });
 
-        const modifiedItems = items.map(stateItem => {
-          if (stateItem.id === item.id) {
-            return { ...stateItem, isFavorited: true };
-          }
-          return stateItem;
-        });
-
-        this.setState({ items: modifiedItems });
-      } else {
-        const filteredItems = storedItems.filter(el => el.id !== item.id);
-        await AsyncStorage.setItem('items', JSON.stringify(filteredItems));
-
-        const modifiedItems = items.map(stateItem => {
-          if (stateItem.id === item.id) {
-            return { ...stateItem, isFavorited: false };
-          }
-          return stateItem;
-        });
-
-        this.setState({ items: modifiedItems });
-      }
+      this.setState({ items: modifiedItems });
     } catch (error) {
       console.tron.log(error);
     }

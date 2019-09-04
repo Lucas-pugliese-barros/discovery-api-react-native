@@ -24,13 +24,12 @@ const Item = ({ position, item, action }) => {
         </View>
       </View>
       <Text style={styles.description}>{item.description}</Text>
-      {__DEV__ && (
-        <Text>
-          {item.isFavorited === true ? 'Favoritado' : 'Não favoritado'}
-        </Text>
-      )}
     </View>
   );
+};
+
+Item.defaultProps = {
+  action: () => {},
 };
 
 Item.propTypes = {
@@ -40,7 +39,7 @@ Item.propTypes = {
     description: PropTypes.string,
     isFavorited: PropTypes.bool,
   }).isRequired,
-  action: PropTypes.func.isRequired,
+  action: PropTypes.func,
 };
 
 export default Item;
