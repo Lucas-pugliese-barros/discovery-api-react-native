@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, StatusBar, FlatList } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
@@ -25,10 +26,6 @@ export default class HomeScreen extends Component {
 
   async componentDidMount() {
     try {
-      const db = SQLite.openDatabase('test.db', '1.0', '', 1);
-      db.transaction(txn => {
-        txn.executeSql('DROP TABLE IF EXISTS api', []);
-      });
       const call = await fetch('https://www.googleapis.com/discovery/v1/apis');
 
       if (!call.ok) {
@@ -48,9 +45,9 @@ export default class HomeScreen extends Component {
     }
   }
 
-  storeData = async item => {
+  storeData = item => {
     try {
-      const db = SQLite.openDatabase('test.db', '1.0', '', 1);
+      const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
       db.transaction(txn => {
         txn.executeSql(SQL_CREATE_TABLE, []);
         txn.executeSql(SQL_INSERT_VALUES, [
@@ -67,6 +64,7 @@ export default class HomeScreen extends Component {
         ]);
       });
 
+      // TODO: Verificar isso - Talvez precise trocar o checkbox
       const { items } = this.state;
       const modifiedItems = items.map(stateItem => {
         if (stateItem.id === item.id) {
