@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, FlatList } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  FlatList,
+  Text,
+} from 'react-native';
+import SQLite from 'react-native-sqlite-storage';
 
 import Item from '~/components/Item';
 
@@ -22,26 +28,22 @@ export default class FavoritesScreen extends Component {
 
   async componentDidMount() {
     try {
-      const items = await this.getData('items');
-      this.setState({ items });
+      const db = SQLite.openDatabase('test.db', '1.0', '', 1);
+      // eslint-disable-next-line no-unused-vars
+      const items = [];
+      db.transaction(txc => {
+        txc.executeSql('SELECT * FROM `api`', [], (tx, res) => {
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < res.rows.length; ++i) {
+            items.push(res.rows.item(i));
+          }
+          this.setState({ items });
+        });
+      });
     } catch (error) {
       console.tron.log(error);
     }
   }
-
-  getData = async key => {
-    try {
-      const val = await AsyncStorage.getItem(key);
-
-      if (val !== null) {
-        return JSON.parse(val);
-      }
-
-      return [];
-    } catch (error) {
-      console.tron.log(error);
-    }
-  };
 
   render() {
     const { items } = this.state;
@@ -51,6 +53,7 @@ export default class FavoritesScreen extends Component {
         <StatusBar barStyle="dark-content" />
         <SafeAreaView>
           <ScrollView contentInsetAdjustmentBehavior="automatic">
+            <Text>{items.length}</Text>
             <FlatList
               data={items}
               horizontal={false}

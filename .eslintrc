@@ -29,7 +29,8 @@
     "import/prefer-default-export": "off",
     "no-console": "off",
     "global-require": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "no-alert": "off"
   },
   "settings": {
     "import/resolver": {
