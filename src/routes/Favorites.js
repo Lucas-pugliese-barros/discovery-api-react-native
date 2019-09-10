@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  FlatList,
-  Text,
-} from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, FlatList } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
 
 import Item from '~/components/Item';
@@ -29,7 +23,6 @@ export default class FavoritesScreen extends Component {
   async componentDidMount() {
     try {
       const db = SQLite.openDatabase('test.db', '1.0', '', 1);
-      // eslint-disable-next-line no-unused-vars
       const items = [];
       db.transaction(txc => {
         txc.executeSql('SELECT * FROM `api`', [], (tx, res) => {
@@ -53,7 +46,6 @@ export default class FavoritesScreen extends Component {
         <StatusBar barStyle="dark-content" />
         <SafeAreaView>
           <ScrollView contentInsetAdjustmentBehavior="automatic">
-            <Text>{items.length}</Text>
             <FlatList
               data={items}
               horizontal={false}
