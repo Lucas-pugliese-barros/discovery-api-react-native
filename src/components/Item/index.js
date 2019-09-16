@@ -12,12 +12,12 @@ const Item = ({ position, item, action }) => {
       <View style={styles.titleContainer}>
         <View>
           <Text style={styles.title}>
-            {position} {item.id}
+            {position} {item.id || item.name}
           </Text>
         </View>
         <View>
           <CheckBox
-            value={item.isFavorited === true}
+            value={item.isFavorited === 1}
             onValueChange={() => action(item)}
             tintColors={{ true: '#CCDD38' }}
           />
@@ -37,7 +37,8 @@ Item.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.string,
     description: PropTypes.string,
-    isFavorited: PropTypes.bool,
+    isFavorited: PropTypes.number,
+    name: PropTypes.string,
   }).isRequired,
   action: PropTypes.func,
 };

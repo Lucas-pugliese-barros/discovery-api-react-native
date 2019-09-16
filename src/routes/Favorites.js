@@ -1,6 +1,7 @@
+/* eslint-disable no-undef */
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, StatusBar, FlatList } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import SQLite from 'react-native-sqlite-storage';
 
 import Item from '~/components/Item';
 
@@ -20,28 +21,30 @@ export default class FavoritesScreen extends Component {
     items: [],
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     try {
-      const items = await this.getData('items');
-      this.setState({ items });
+      const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
+      const items = [];
+      db.transaction(txc => {
+        txc.executeSql('SELECT * FROM `api`', [], (tx, res) => {
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < res.rows.length; i += 1) {
+            items.push(res.rows.item(i));
+          }
+          this.setState({ items });
+        });
+      });
     } catch (error) {
       console.tron.log(error);
     }
   }
 
-  getData = async key => {
-    try {
-      const val = await AsyncStorage.getItem(key);
-
-      if (val !== null) {
-        return JSON.parse(val);
-      }
-
-      return [];
-    } catch (error) {
-      console.tron.log(error);
-    }
-  };
+  componentWillUnmount() {
+    const db = SQLite.openDatabase('favorites.db', '1.0', '', 1);
+    db.transaction(txn => {
+      txn.executeSql('delete from api', []);
+    });
+  }
 
   render() {
     const { items } = this.state;

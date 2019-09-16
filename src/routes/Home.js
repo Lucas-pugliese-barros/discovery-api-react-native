@@ -1,9 +1,11 @@
+/* eslint-disable no-undef */
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, StatusBar, FlatList } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import SQLite from 'react-native-sqlite-storage';
 
 import Item from '~/components/Item';
 import HeartButton from '~/components/HeartButton';
+import { SQL_CREATE_TABLE, SQL_INSERT_VALUES } from '~/config/db';
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
@@ -34,7 +36,7 @@ export default class HomeScreen extends Component {
 
       const items = response.items.map(item => ({
         ...item,
-        isFavorited: false,
+        isFavorited: 0,
       }));
 
       this.setState({ items });
@@ -43,45 +45,35 @@ export default class HomeScreen extends Component {
     }
   }
 
-  async componentWillUnmount() {
+  storeData = item => {
     try {
-      await AsyncStorage.setItem('items', JSON.stringify([]));
-    } catch (error) {
-      console.tron.log(error);
-    }
-  }
+      const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
+      db.transaction(txn => {
+        txn.executeSql(SQL_CREATE_TABLE, []);
+        txn.executeSql(SQL_INSERT_VALUES, [
+          item.id,
+          item.kind,
+          item.name,
+          item.version,
+          item.title,
+          item.description,
+          item.discoveryRestUrl,
+          item.documentationLink,
+          item.preferred,
+          1,
+        ]);
+      });
 
-  storeData = async item => {
-    try {
+      // TODO: Verificar isso - Talvez precise trocar o checkbox
       const { items } = this.state;
-      const storedItems = await this.getData('items');
-
-      const modifiedItem = { ...item, isFavorited: true };
-      const mergeItems = [...storedItems, modifiedItem];
-      await AsyncStorage.setItem('items', JSON.stringify(mergeItems));
-
       const modifiedItems = items.map(stateItem => {
         if (stateItem.id === item.id) {
-          return { ...stateItem, isFavorited: true };
+          return { ...stateItem, isFavorited: 1 };
         }
         return stateItem;
       });
 
       this.setState({ items: modifiedItems });
-    } catch (error) {
-      console.tron.log(error);
-    }
-  };
-
-  getData = async key => {
-    try {
-      const val = await AsyncStorage.getItem(key);
-
-      if (val !== null) {
-        return JSON.parse(val);
-      }
-
-      return [];
     } catch (error) {
       console.tron.log(error);
     }

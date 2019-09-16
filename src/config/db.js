@@ -1,0 +1,41 @@
+export const TABLE_NAME = 'api';
+export const COLUMN_NAME_SEQUENCE = 'id';
+export const COLUMN_NAME_KIND = 'kind';
+export const COLUMN_NAME = 'name';
+export const COLUMN_NAME_VERSION = 'version';
+export const COLUMN_NAME_TITLE = 'title';
+export const COLUMN_NAME_DESCRIPTION = 'description';
+export const COLUMN_NAME_DISCOVERY_RESULT_URL = 'discoveryRestUrl';
+export const COLUMN_NAME_DOCUMENTATION_LINK = 'documentationLink';
+export const COLUMN_NAME_PREFERRED = 'preferred';
+export const COLUMN_NAME_IS_FAVORITED = 'isFavorited';
+
+export const WHERE_CLAUSE = '=?';
+
+export const SQL_CREATE_TABLE = `
+  CREATE TABLE IF NOT EXISTS ${TABLE_NAME} (
+    ${COLUMN_NAME_SEQUENCE} TEXT,
+    ${COLUMN_NAME_KIND} TEXT,
+    ${COLUMN_NAME} TEXT,
+    ${COLUMN_NAME_VERSION} TEXT,
+    ${COLUMN_NAME_TITLE} TEXT,
+    ${COLUMN_NAME_DESCRIPTION} TEXT,
+    ${COLUMN_NAME_DISCOVERY_RESULT_URL} TEXT,
+    ${COLUMN_NAME_DOCUMENTATION_LINK} TEXT,
+    ${COLUMN_NAME_PREFERRED} TEXT,
+    ${COLUMN_NAME_IS_FAVORITED} INTEGER);`;
+
+export const SQL_INSERT_VALUES = `
+  INSERT INTO ${TABLE_NAME} (
+    ${COLUMN_NAME_SEQUENCE},
+    ${COLUMN_NAME_KIND},
+    ${COLUMN_NAME},
+    ${COLUMN_NAME_VERSION},
+    ${COLUMN_NAME_TITLE},
+    ${COLUMN_NAME_DESCRIPTION},
+    ${COLUMN_NAME_DISCOVERY_RESULT_URL},
+    ${COLUMN_NAME_DOCUMENTATION_LINK},
+    ${COLUMN_NAME_PREFERRED},
+    ${COLUMN_NAME_IS_FAVORITED})
+  VALUES (?,?,?,?,?,?,?,?,?,?);
+`;
