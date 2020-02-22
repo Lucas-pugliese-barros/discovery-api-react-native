@@ -23,13 +23,13 @@ export default class FavoritesScreen extends Component {
   };
 
   componentDidMount() {
-    console.tron.time(LOCAL);
+    console.time(LOCAL);
     try {
       const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
       const items = [];
       db.transaction(txc => {
         txc.executeSql('SELECT * FROM `api`', [], (tx, res) => {
-          console.tron.timeEnd(LOCAL);
+          console.timeEnd(LOCAL);
           for (let i = 0; i < res.rows.length; i += 1) {
             items.push(res.rows.item(i));
           }
@@ -37,7 +37,7 @@ export default class FavoritesScreen extends Component {
         });
       });
     } catch (error) {
-      console.tron.log(error);
+      console.log(error);
     }
   }
 

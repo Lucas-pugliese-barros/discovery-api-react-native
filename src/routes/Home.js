@@ -27,7 +27,7 @@ export default class HomeScreen extends Component {
 
   async componentDidMount() {
     try {
-      console.tron.time(REMOTE);
+      console.time(REMOTE);
       const call = await fetch('https://www.googleapis.com/discovery/v1/apis');
 
       if (!call.ok) {
@@ -35,23 +35,23 @@ export default class HomeScreen extends Component {
       }
 
       const response = await call.json();
-      console.tron.timeEnd(REMOTE);
+      console.timeEnd(REMOTE);
 
       const items = response.items.map(item => ({
         ...item,
         isFavorited: 0,
       }));
-      console.tron.time(LIST_REMOTE);
+      console.time(LIST_REMOTE);
 
       this.setState({ items });
     } catch (error) {
-      console.tron.log(error);
+      console.log(error);
     }
   }
 
   storeData = (item, index) => {
     try {
-      if (index === 0) console.tron.time(LIKE_API);
+      if (index === 0) console.time(LIKE_API);
 
       const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
       db.transaction(txn => {
@@ -68,7 +68,7 @@ export default class HomeScreen extends Component {
           item.preferred,
           1,
         ]);
-        if (index === 0) console.tron.timeEnd(LIKE_API);
+        if (index === 0) console.timeEnd(LIKE_API);
       });
 
       const { items } = this.state;
@@ -81,7 +81,7 @@ export default class HomeScreen extends Component {
 
       this.setState({ items: modifiedItems });
     } catch (error) {
-      console.tron.log(error);
+      console.log(error);
     }
   };
 

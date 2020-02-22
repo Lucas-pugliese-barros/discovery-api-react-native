@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CheckBox from '@react-native-community/checkbox';
+import { withNavigation } from 'react-navigation';
 
 import { View, Text } from 'react-native';
 
 import styles from './styles';
 import { LIST_REMOTE } from '~/config/metric';
 
-export default class Item extends Component {
+class Item extends Component {
   static propTypes = {
     position: PropTypes.number.isRequired,
     item: PropTypes.shape({
@@ -17,6 +18,11 @@ export default class Item extends Component {
       name: PropTypes.string,
     }).isRequired,
     action: PropTypes.func,
+    navigation: PropTypes.shape({
+      state: PropTypes.shape({
+        routeName: PropTypes.string,
+      })
+    }).isRequired,
   };
 
   static defaultProps = {
@@ -24,10 +30,15 @@ export default class Item extends Component {
   };
 
   componentDidMount() {
-    const { position } = this.props;
+    const {
+      position,
+      navigation: {
+        state: { routeName },
+      },
+    } = this.props;
 
-    if (position === 3) {
-      console.tron.timeEnd(LIST_REMOTE);
+    if (position === 3 && routeName === 'Home' ) {
+      console.timeEnd(LIST_REMOTE);
     }
   }
 
@@ -55,3 +66,5 @@ export default class Item extends Component {
     );
   }
 }
+
+export default withNavigation(Item);
