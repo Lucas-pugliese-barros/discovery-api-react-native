@@ -6,6 +6,7 @@ import SQLite from 'react-native-sqlite-storage';
 import Item from '~/components/Item';
 import HeartButton from '~/components/HeartButton';
 import { SQL_CREATE_TABLE, SQL_INSERT_VALUES } from '~/config/db';
+import { REMOTE, LIKE_API, LIST_REMOTE } from '~/config/metric';
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
@@ -24,17 +25,9 @@ export default class HomeScreen extends Component {
     items: [],
   };
 
-  /*
-    Função executada quando o componente é montado.
-
-    Executa uma requisição para a API do Google
-    Adiciona o status 'isFavorited' para controlar cor do checkbox
-
-    Não me preocupei em resetar os status ao voltar da tela de Favoritos
-    para tela início. Imagino que a cada teste o aplicativo seja 'resetado'
-  */
   async componentDidMount() {
     try {
+      console.tron.time(REMOTE);
       const call = await fetch('https://www.googleapis.com/discovery/v1/apis');
 
       if (!call.ok) {
@@ -42,11 +35,13 @@ export default class HomeScreen extends Component {
       }
 
       const response = await call.json();
+      console.tron.timeEnd(REMOTE);
 
       const items = response.items.map(item => ({
         ...item,
         isFavorited: 0,
       }));
+      console.tron.time(LIST_REMOTE);
 
       this.setState({ items });
     } catch (error) {
@@ -54,17 +49,10 @@ export default class HomeScreen extends Component {
     }
   }
 
-  /*
-    Adiciona o item no banco de dados do SQLite
-
-    Se for seguir a lógica do Flutter, acho que seria isso:
-
-    const COUNT = 0
-    COUNT += 1 (ao final do db.transaction)
-    se COUNT === 3 parar contagem
-  */
-  storeData = item => {
+  storeData = (item, index) => {
     try {
+      if (index === 0) console.tron.time(LIKE_API);
+
       const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
       db.transaction(txn => {
         txn.executeSql(SQL_CREATE_TABLE, []);
@@ -80,13 +68,9 @@ export default class HomeScreen extends Component {
           item.preferred,
           1,
         ]);
+        if (index === 0) console.tron.timeEnd(LIKE_API);
       });
-      // Nessa parte do código o item já foi adicionado no banco de dados
 
-      /*
-        Aqui é mais estético... 
-        É só um controle pra trocar a cor do checkbox
-      */
       const { items } = this.state;
       const modifiedItems = items.map(stateItem => {
         if (stateItem.id === item.id) {

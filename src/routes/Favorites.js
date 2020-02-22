@@ -4,6 +4,7 @@ import { SafeAreaView, ScrollView, StatusBar, FlatList } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
 
 import Item from '~/components/Item';
+import { LOCAL } from '~/config/metric';
 
 export default class FavoritesScreen extends Component {
   static navigationOptions = {
@@ -21,20 +22,14 @@ export default class FavoritesScreen extends Component {
     items: [],
   };
 
-  /*
-    Função executada quando o componente é montado.
-
-    Abre conexão com o banco de dados
-    Executa um SELECT dos itens favoritados
-    Monta eles na tela
-  */
   componentDidMount() {
+    console.tron.time(LOCAL);
     try {
       const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
       const items = [];
       db.transaction(txc => {
         txc.executeSql('SELECT * FROM `api`', [], (tx, res) => {
-          // eslint-disable-next-line no-plusplus
+          console.tron.timeEnd(LOCAL);
           for (let i = 0; i < res.rows.length; i += 1) {
             items.push(res.rows.item(i));
           }
@@ -46,12 +41,6 @@ export default class FavoritesScreen extends Component {
     }
   }
 
-  /*
-    Função executada quando o componente é desmontado.
-
-    Abre conexão com o banco de dados
-    Executa a query de deleção dos dados
-  */
   componentWillUnmount() {
     const db = SQLite.openDatabase('favorites.db', '1.0', '', 1);
     db.transaction(txn => {
