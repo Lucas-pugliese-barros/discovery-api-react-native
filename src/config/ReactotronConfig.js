@@ -1,6 +1,6 @@
 import Reactotron from 'reactotron-react-native';
 
-// Set ip
+// Set IP to Reactotron
 const host = '192.168.22.56';
 
 if (__DEV__) {

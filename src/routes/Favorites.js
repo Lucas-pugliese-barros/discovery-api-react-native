@@ -21,6 +21,13 @@ export default class FavoritesScreen extends Component {
     items: [],
   };
 
+  /*
+    Função executada quando o componente é montado.
+
+    Abre conexão com o banco de dados
+    Executa um SELECT dos itens favoritados
+    Monta eles na tela
+  */
   componentDidMount() {
     try {
       const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
@@ -39,6 +46,12 @@ export default class FavoritesScreen extends Component {
     }
   }
 
+  /*
+    Função executada quando o componente é desmontado.
+
+    Abre conexão com o banco de dados
+    Executa a query de deleção dos dados
+  */
   componentWillUnmount() {
     const db = SQLite.openDatabase('favorites.db', '1.0', '', 1);
     db.transaction(txn => {
