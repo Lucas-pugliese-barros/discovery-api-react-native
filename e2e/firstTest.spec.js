@@ -14,12 +14,15 @@ describe('Automation started', () => {
   });
 
   it('tap on first six items', async () => {
-    await element(by.id(`check-0`)).tap();
-    await element(by.id(`check-1`)).tap();
-    await element(by.id(`check-2`)).tap();
-    await element(by.id(`check-3`)).tap();
-    await element(by.id(`check-4`)).tap();
-    await element(by.id(`check-5`)).tap();
+    for (let i = 0; i < 6; i += 1) {
+      await element(by.id(`check-${i}`)).tap();
+    }
+    // await element(by.id(`check-0`)).tap();
+    // await element(by.id(`check-1`)).tap();
+    // await element(by.id(`check-2`)).tap();
+    // await element(by.id(`check-3`)).tap();
+    // await element(by.id(`check-4`)).tap();
+    // await element(by.id(`check-5`)).tap();
   });
 
   it('navigate to favorites', async () => {
