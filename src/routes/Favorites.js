@@ -20,11 +20,13 @@ export default class FavoritesScreen extends Component {
 
   state = {
     items: [],
+    loading: false,
   };
 
   componentDidMount() {
     console.time(LOCAL);
     try {
+      this.setState({ loading: true });
       const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
       const items = [];
       db.transaction(txc => {
@@ -34,32 +36,38 @@ export default class FavoritesScreen extends Component {
             items.push(res.rows.item(i));
           }
           this.setState({ items });
+          this.setState({ loading: false });
 
           tx.executeSql('DELETE FROM `api`', []);
         });
       });
     } catch (error) {
+      this.setState({ loading: false });
       console.log(error);
     }
   }
 
   render() {
-    const { items } = this.state;
+    const { items, loading } = this.state;
 
     return (
       <>
         <StatusBar barStyle="dark-content" />
         <SafeAreaView>
           <ScrollView contentInsetAdjustmentBehavior="automatic">
-            <FlatList
-              data={items}
-              horizontal={false}
-              numColumns={1}
-              keyExtractor={item => item.id}
-              renderItem={({ item, index }) => (
-                <Item position={index} item={item} />
-              )}
-            />
+            {!loading && (
+              <FlatList
+                id="favoritesFlatList"
+                testID="favoritesFlatList"
+                data={items}
+                horizontal={false}
+                numColumns={1}
+                keyExtractor={item => item.id}
+                renderItem={({ item, index }) => (
+                  <Item position={index} item={item} />
+                )}
+              />
+            )}
           </ScrollView>
         </SafeAreaView>
       </>

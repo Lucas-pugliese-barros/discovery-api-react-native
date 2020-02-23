@@ -10,6 +10,8 @@ const HeartButton = ({ navigation: { navigate } }) => (
     style={styles.container}
     underlayColor="#fff"
     onPress={() => navigate('Favorites')}
+    id="heartButton"
+    testID="heartButton"
   >
     <Image source={require('~/config/like.png')} style={styles.image} />
   </TouchableHighlight>

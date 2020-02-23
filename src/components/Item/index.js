@@ -46,7 +46,12 @@ class Item extends Component {
     const { item, position, action } = this.props;
 
     return (
-      <View style={styles.container} key={item.id}>
+      <View
+        id={`item-${position}`}
+        testID={`item-${position}`}
+        style={styles.container}
+        key={item.id}
+      >
         <View style={styles.titleContainer}>
           <View>
             <Text style={styles.title}>
@@ -55,6 +60,8 @@ class Item extends Component {
           </View>
           <View>
             <CheckBox
+              id={`check-${position}`}
+              testID={`check-${position}`}
               value={item.isFavorited === 1}
               onValueChange={() => action(item, position)}
               tintColors={{ true: '#CCDD38' }}

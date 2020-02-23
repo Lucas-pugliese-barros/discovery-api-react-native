@@ -23,10 +23,12 @@ export default class HomeScreen extends Component {
 
   state = {
     items: [],
+    loading: false,
   };
 
   async componentDidMount() {
     try {
+      this.loading = true;
       console.time(REMOTE);
       const call = await fetch('https://www.googleapis.com/discovery/v1/apis');
 
@@ -43,6 +45,7 @@ export default class HomeScreen extends Component {
       }));
       console.time(LIST_REMOTE);
 
+      this.setState({ loading: false });
       this.setState({ items });
     } catch (error) {
       console.log(error);
@@ -86,21 +89,26 @@ export default class HomeScreen extends Component {
   };
 
   render() {
-    const { items } = this.state;
+    const { items, loading } = this.state;
+
     return (
       <>
         <StatusBar barStyle="dark-content" />
         <SafeAreaView>
           <ScrollView contentInsetAdjustmentBehavior="automatic">
-            <FlatList
-              data={items}
-              horizontal={false}
-              numColumns={1}
-              keyExtractor={item => item.id}
-              renderItem={({ item, index }) => (
-                <Item action={this.storeData} position={index} item={item} />
-              )}
-            />
+            {!loading && (
+              <FlatList
+                id="remoteFlatList"
+                testID="remoteFlatList"
+                data={items}
+                horizontal={false}
+                numColumns={1}
+                keyExtractor={item => item.id}
+                renderItem={({ item, index }) => (
+                  <Item action={this.storeData} position={index} item={item} />
+                )}
+              />
+            )}
           </ScrollView>
         </SafeAreaView>
       </>
