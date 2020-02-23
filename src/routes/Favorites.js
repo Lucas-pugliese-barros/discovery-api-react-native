@@ -34,18 +34,13 @@ export default class FavoritesScreen extends Component {
             items.push(res.rows.item(i));
           }
           this.setState({ items });
+
+          tx.executeSql('DELETE FROM `api`', []);
         });
       });
     } catch (error) {
       console.log(error);
     }
-  }
-
-  componentWillUnmount() {
-    const db = SQLite.openDatabase('favorites.db', '1.0', '', 1);
-    db.transaction(txn => {
-      txn.executeSql('delete from api', []);
-    });
   }
 
   render() {
