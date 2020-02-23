@@ -21,7 +21,7 @@ class Item extends Component {
     navigation: PropTypes.shape({
       state: PropTypes.shape({
         routeName: PropTypes.string,
-      })
+      }),
     }).isRequired,
   };
 
@@ -37,7 +37,7 @@ class Item extends Component {
       },
     } = this.props;
 
-    if (position === 3 && routeName === 'Home' ) {
+    if (position === 3 && routeName === 'Home') {
       console.timeEnd(LIST_REMOTE);
     }
   }
