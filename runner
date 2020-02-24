@@ -9,7 +9,7 @@ echo 'Iniciando o logcat...'
 react-native log-android | grep "ReactNativeJS" | tee -a ./results.txt & 
 
 echo 'Iniciando o loop de teste automatizado...'
-for run in {1..40}
+for run in {1..101}
 do
   detox test --configuration android.emu.debug
 done
