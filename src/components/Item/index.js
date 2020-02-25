@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import CheckBox from '@react-native-community/checkbox';
 import { withNavigation } from 'react-navigation';
 
 import { View, Text } from 'react-native';
 
+import Checkbox from '~/components/Checkbox';
 import styles from './styles';
 import { LIST_REMOTE } from '~/config/metric';
 
@@ -59,12 +59,11 @@ class Item extends Component {
             </Text>
           </View>
           <View>
-            <CheckBox
+            <Checkbox
               id={`check-${position}`}
               testID={`check-${position}`}
-              value={item.isFavorited === 1}
-              onValueChange={() => action(item, position)}
-              tintColors={{ true: '#CCDD38' }}
+              selected={item.isFavorited === 1}
+              onPress={() => action(item, position)}
             />
           </View>
         </View>
