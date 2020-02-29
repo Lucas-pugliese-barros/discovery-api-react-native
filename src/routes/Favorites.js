@@ -24,12 +24,12 @@ export default class FavoritesScreen extends Component {
   };
 
   componentDidMount() {
-    console.time(LOCAL);
     try {
       this.setState({ loading: true });
       const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
       const items = [];
       db.transaction(txc => {
+        console.time(LOCAL);
         txc.executeSql('SELECT * FROM `api`', [], (tx, res) => {
           console.timeEnd(LOCAL);
           for (let i = 0; i < res.rows.length; i += 1) {

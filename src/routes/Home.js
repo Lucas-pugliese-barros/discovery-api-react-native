@@ -54,24 +54,28 @@ export default class HomeScreen extends Component {
 
   storeData = (item, index) => {
     try {
-      if (index === 0) console.time(LIKE_API);
-
       const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
       db.transaction(txn => {
         txn.executeSql(SQL_CREATE_TABLE, []);
-        txn.executeSql(SQL_INSERT_VALUES, [
-          item.id,
-          item.kind,
-          item.name,
-          item.version,
-          item.title,
-          item.description,
-          item.discoveryRestUrl,
-          item.documentationLink,
-          item.preferred,
-          1,
-        ]);
-        if (index === 0) console.timeEnd(LIKE_API);
+        if (index === 0) console.time(LIKE_API);
+        txn.executeSql(
+          SQL_INSERT_VALUES,
+          [
+            item.id,
+            item.kind,
+            item.name,
+            item.version,
+            item.title,
+            item.description,
+            item.discoveryRestUrl,
+            item.documentationLink,
+            item.preferred,
+            1,
+          ],
+          () => {
+            if (index === 0) console.timeEnd(LIKE_API);
+          }
+        );
       });
 
       const { items } = this.state;
