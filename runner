@@ -1,0 +1,26 @@
+#!/bin/bash
+echo 'Criando txt de Resultados...'
+touch ./results.txt
+
+echo 'Iniciando o watcher do React Native...'
+react-native start &
+
+echo 'Iniciando o logcat...'
+react-native log-android | grep "ReactNativeJS" | tee -a ./results.txt & 
+
+echo 'Iniciando o loop de teste automatizado...'
+for run in {1..101}
+do
+  detox test --configuration android.emu.debug
+done
+
+pkill -f "react"
+pkill -f "detox"
+
+echo "Filtrando resultados..."
+cat results.txt | grep -e ".[0-9]ms" > ./results.txt
+
+echo "Excluindo as duas primeiras linhas..."
+sed -e '1,2d' ./results.txt > ./results.txt
+
+echo "ALERTA: A CADA 4 LINHAS, AS PRÓXIMAS 2 LINHAS PODEM SER EXCLUIDAS"

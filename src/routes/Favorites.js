@@ -4,6 +4,7 @@ import { SafeAreaView, ScrollView, StatusBar, FlatList } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
 
 import Item from '~/components/Item';
+import { LOCAL } from '~/config/metric';
 
 export default class FavoritesScreen extends Component {
   static navigationOptions = {
@@ -19,50 +20,54 @@ export default class FavoritesScreen extends Component {
 
   state = {
     items: [],
+    loading: false,
   };
 
   componentDidMount() {
     try {
+      this.setState({ loading: true });
       const db = SQLite.openDatabase('favorites.db', '1.0', '', -1);
       const items = [];
       db.transaction(txc => {
+        console.time(LOCAL);
         txc.executeSql('SELECT * FROM `api`', [], (tx, res) => {
-          // eslint-disable-next-line no-plusplus
+          console.timeEnd(LOCAL);
           for (let i = 0; i < res.rows.length; i += 1) {
             items.push(res.rows.item(i));
           }
           this.setState({ items });
+          this.setState({ loading: false });
+
+          tx.executeSql('DELETE FROM `api`', []);
         });
       });
     } catch (error) {
-      console.tron.log(error);
+      this.setState({ loading: false });
+      console.log(error);
     }
   }
 
-  componentWillUnmount() {
-    const db = SQLite.openDatabase('favorites.db', '1.0', '', 1);
-    db.transaction(txn => {
-      txn.executeSql('delete from api', []);
-    });
-  }
-
   render() {
-    const { items } = this.state;
+    const { items, loading } = this.state;
 
     return (
       <>
         <StatusBar barStyle="dark-content" />
         <SafeAreaView>
           <ScrollView contentInsetAdjustmentBehavior="automatic">
-            <FlatList
-              data={items}
-              horizontal={false}
-              numColumns={1}
-              keyExtractor={item => item.id}
-              renderItem={({ item, index }) => (
-                <Item position={index} item={item} />
-              )}
-            />
+            {!loading && (
+              <FlatList
+                id="favoritesFlatList"
+                testID="favoritesFlatList"
+                data={items}
+                horizontal={false}
+                numColumns={1}
+                keyExtractor={item => item.id}
+                renderItem={({ item, index }) => (
+                  <Item position={index} item={item} />
+                )}
+              />
+            )}
           </ScrollView>
         </SafeAreaView>
       </>
